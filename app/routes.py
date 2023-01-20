@@ -2,7 +2,9 @@ from datetime import datetime
 import json
 from flask import jsonify, make_response, request
 from Crypto.Signature import pkcs1_15
+from Crypto.Random import get_random_bytes
 from Crypto.Hash import SHA256
+from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 import pickle
 import codecs
@@ -42,7 +44,7 @@ def results():
         if not success:
             logger.warning("Unauthorized access detected from " + request.remote_addr)
             logger.warning("Unauthorized access type: " + results)
-            payload = {"status": "fail", "message": results}
+            payload = {"status": "fail", "message": "Not authorized to access results"}
             return make_response(
                 jsonify(payload), 400, {"Content-Type": "application/json"}
             )
@@ -50,8 +52,10 @@ def results():
         private_key = RSA.import_key(private_key_pem)
         hashed_data = SHA256.new(json.dumps(results).encode())
         signature = pkcs1_15.new(private_key).sign(hashed_data)
+        encryptor = AES.new(get_random_bytes(16), AES.MODE_GCM)
+        ciphertext = encryptor.encrypt(json.dumps(results).encode())
         payload = {
-            "results": results,
+            "results": ciphertext.hex(),
             "signature": signature.hex(),
             "public-key": public_key_pem.decode(),
             "status": "success",

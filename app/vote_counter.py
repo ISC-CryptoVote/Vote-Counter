@@ -25,14 +25,14 @@ class VoteCounter:
         return self.pub_key
 
     @classmethod
-    def get_encryprypted_votes(self):
+    def get_encrypted_votes(self):
         logger.none("Collecting votes from the database")
         logger.none("Votes are collected from the database.")
         logger.none("Checking the validity of collected votes from the database.")
         cand = 10
         vote_count = 5
         votes = []
-        for _ in range(vote_count):
+        for _ in range(73):
             vot = (cand - 1) * [0] + [1]
             random.shuffle(vot)
             votes.append(vot)
@@ -43,7 +43,7 @@ class VoteCounter:
             votes.append(vot)
 
         for _ in range(2):
-            vot = (cand - 2) * [0] + [1, 1]
+            vot = (cand - 2) * [0] + [1, 1, 1, 1]
             random.shuffle(vot)
             votes.append(vot)
         logger.green("Collected votes from the database are valid")
@@ -63,7 +63,7 @@ class VoteCounter:
         Count the votes for each candidate in the election.
 
         Parameters:
-        encripted_votes (list): A list of encrypted votes.
+        encrypted_votes (list): A list of encrypted votes.
 
         Returns:
         list: A list of the sum of votes for each candidate.
@@ -87,15 +87,14 @@ class VoteCounter:
             if not (self.priv_key.decrypt(v) == 0 or self.priv_key.decrypt(v) == 1):
                 return False, "Vote contains invalid values"
 
-        # check vote consists with atleast one vote
+        # check vote consists with at least one vote
         if self.priv_key.decrypt(sum(vote)) <= 0:
-            return False, "Vote does not conatin suffiecient number of votes"
+            return False, "Vote does not contain sufficient number of votes"
 
         # check the vote has not contains more than the valid number of votes
         valid_vote_count = 3
         if self.priv_key.decrypt(sum(vote)) > valid_vote_count:
-            print(self.priv_key.decrypt(sum(vote)))
-            return False, "Vote conatins invalid number of votes"
+            return False, "Vote contains invalid number of votes"
 
         return True, "Vote is valid"
 
@@ -110,13 +109,13 @@ class VoteCounter:
         """
         # check that whether that it is time calculate results
         if datetime.now() <= self.release_time:
-            return False, "Results are not published yet"
+            return False, "Trying to access vote results before publishing"
 
         if self.is_results_available:
             return True, self.results
 
         # get votes from the database
-        votes = self.get_encryprypted_votes()
+        votes = self.get_encrypted_votes()
 
         # shuffle the collected voted
         random.shuffle(votes)
@@ -144,8 +143,9 @@ class VoteCounter:
 
         # calculate the final results
         logger.none("Calculating the final results")
+        results = self.count_vote_for_each_candidate(valid_votes)
         self.results = {
-            "results": self.decrypt_vote_counts(self.results),
+            "results": self.decrypt_vote_counts(results),
             "valid_votes": valid,
             "rejected_votes": rejected,
             "total_votes": total,
