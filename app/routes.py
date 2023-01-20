@@ -23,7 +23,7 @@ public_key_pem = public_key.export_key()
 @app.route("/", methods=["GET"])
 def health_check():
     payload = {"message": "Vote counting service", "status": "success"}
-    return jsonify(payload), 200, {"Content-Type": "application/json"}
+    return make_response(jsonify(payload), 200, {"Content-Type": "application/json"})
 
 
 @app.route("/public_key", methods=["GET"])
@@ -31,7 +31,7 @@ def public_key():
     bytes_key = pickle.dumps(vc.get_public_key())
     str_public_key = codecs.encode(bytes_key, "base64").decode()
     payload = {"public": str_public_key, "status": "success"}
-    return jsonify(payload), 200, {"Content-Type": "application/json"}
+    return make_response(jsonify(payload), 200, {"Content-Type": "application/json"})
 
 
 @app.route("/results", methods=["GET"])
