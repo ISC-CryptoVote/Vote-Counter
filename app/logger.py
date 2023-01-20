@@ -44,5 +44,5 @@ class Logger:
 
     def print_line(self):
         print(
-            f"{TeminalColors.HEADER}=================================================================================={TeminalColors.ENDC}"
+            f"{TeminalColors.HEADER}================================================================{TeminalColors.ENDC}"
         )

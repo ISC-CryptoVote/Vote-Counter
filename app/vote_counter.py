@@ -16,8 +16,7 @@ class VoteCounter:
         logger.print_line()
         logger.header("Vote counter has initialized")
         logger.header(
-            "Results will be released at "
-            + self.release_time.strftime("%Y-%b-%d %H:%M:%S")
+            "Results will be released at " + self.release_time.strftime("%Y-%b-%d %H:%M:%S")
         )
         logger.print_line()
 
