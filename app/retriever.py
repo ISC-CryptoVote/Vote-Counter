@@ -1,4 +1,6 @@
 from pymongo import MongoClient
+from Crypto.PublicKey import RSA
+from Crypto.Signature import pkcs1_15
 
 class Retriever():
     def __init__(self):
@@ -18,6 +20,13 @@ class Retriever():
         signature = payload["signature"]
         public_key = payload["public-key"]
         status = payload["status"]
-        ##
-        return votes
+
+        public_key = RSA.import_key(public_key)
+        #hashed_ballot = SHA256.new(ballot.encode())
+        try:
+            pkcs1_15.new(public_key).verify(bytes.fromhex(signature))
+            return votes
+        except (ValueError, TypeError):
+            return None
+
 
