@@ -11,7 +11,7 @@ from app import app
 from app.vote_counter import VoteCounter
 from app.logger import Logger
 
-vc = VoteCounter(datetime(2023, 1, 20, 15, 40))
+vc = VoteCounter(datetime(2023, 1, 20, 17, 00))
 
 private_key = RSA.generate(2048)
 public_key = private_key.publickey()
